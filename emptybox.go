@@ -2,20 +2,35 @@ package main
 
 import (
 	"fmt"
-	"github.com/BurntSushi/xgb"
+	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgb/xproto"
+	"github.com/BurntSushi/xgbutil/xcursor"
+	//"github.com/BurntSushi/xgbutil/xevent"
 )
 
 func main() {
-	X, err := xgb.NewConn()
+	// connect to X
+	X, err := xgbutil.NewConn()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer X.Conn().Close()
+
+	// create cursor
+	_, err = xcursor.CreateCursor(X, xcursor.Circle)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	wid, _ := xproto.NewWindowId(X)
-	screen := xproto.Setup(X).DefaultScreen(X)
-	xproto.CreateWindow(X, screen.RootDepth, wid, screen.Root,
+	// create an xgb_conn for later use 
+	xgb_conn := X.Conn()
+
+	// create a sample window
+	wid, _ := xproto.NewWindowId(xgb_conn)
+	screen := xproto.Setup(xgb_conn).DefaultScreen(xgb_conn)
+	xproto.CreateWindow(xgb_conn, screen.RootDepth, wid, screen.Root,
 		0, 0, 500, 500, 0,
 		xproto.WindowClassInputOutput, screen.RootVisual,
 		xproto.CwBackPixel | xproto.CwEventMask,
@@ -25,16 +40,31 @@ func main() {
 			xproto.EventMaskKeyPress |
 			xproto.EventMaskKeyRelease})
 
-	xproto.MapWindow(X, wid)
+	xproto.MapWindow(xgb_conn, wid)
+
+	// setting up event handling
+	/*pingBefore, pingAfter, pingQuit := xevent.MainPing(X)
+EVENTLOOP:
 	for {
-		event, xerr := X.WaitForEvent()
-		if event == nil && xerr == nil {
+		select {
+		case <-pingBefore:
+			// Wait for event processing to finish.
+			<-pingAfter
+		case val := <-someOtherChannel:
+			// do some work with val
+		case <-pingQuit:
+			break EVENTLOOP
+		}
+	}*/
+	for {
+		ev, xerr := xgb_conn.WaitForEvent()
+		if ev == nil && xerr == nil {
 			fmt.Println("Both event and error are nil. Exiting...")
 			return
 		}
 
-		if event != nil {
-			fmt.Printf("Event: %s\n", event)
+		if ev != nil {
+			fmt.Printf("Event: %s\n", ev)
 		}
 		if xerr != nil {
 			fmt.Printf("Error: %s\n", xerr)

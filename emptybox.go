@@ -60,13 +60,6 @@ EVENTLOOP:
 		}
 	}*/
 
-	// create cursor
-	_, err = xcursor.CreateCursor(X, xcursor.Circle)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	for {
 		ev, xerr := xgb_conn.WaitForEvent()
 		if ev == nil && xerr == nil {

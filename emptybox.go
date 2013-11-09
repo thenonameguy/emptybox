@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil/xcursor"
@@ -9,6 +10,8 @@ import (
 )
 
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	// connect to X
 	X, err := xgbutil.NewConn()
 	if err != nil {
@@ -18,7 +21,7 @@ func main() {
 	defer X.Conn().Close()
 
 	// create cursor
-	_, err = xcursor.CreateCursor(X, xcursor.Circle)
+	_, err = xcursor.CreateCursor(X, xcursor.LeftPtr)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -56,6 +59,14 @@ EVENTLOOP:
 			break EVENTLOOP
 		}
 	}*/
+
+	// create cursor
+	_, err = xcursor.CreateCursor(X, xcursor.Circle)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	for {
 		ev, xerr := xgb_conn.WaitForEvent()
 		if ev == nil && xerr == nil {

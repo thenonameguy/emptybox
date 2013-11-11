@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"runtime"
-	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgb/xproto"
+	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/xcursor"
+	"runtime"
 	//"github.com/BurntSushi/xgbutil/xevent"
 	"github.com/BurntSushi/xgbutil/xwindow"
 )
@@ -34,12 +34,12 @@ func main() {
 	// assign default cursor to "the default invisible root window"
 	cookie := xproto.ChangeWindowAttributesChecked(XC, X.RootWin(),
 		xproto.CwBackPixmap|xproto.CwEventMask|xproto.CwCursor,
-		[]uint32 {
+		[]uint32{
 			xproto.BackPixmapParentRelative,
-	                xproto.EventMaskButtonPress|
-			xproto.EventMaskButtonRelease|
-                        xproto.EventMaskButtonMotion|
-			xproto.EventMaskPointerMotion,
+			xproto.EventMaskButtonPress |
+				xproto.EventMaskButtonRelease |
+				xproto.EventMaskButtonMotion |
+				xproto.EventMaskPointerMotion,
 			uint32(cursor),
 		})
 	err = cookie.Check()
@@ -49,14 +49,14 @@ func main() {
 	}
 
 	win, err := xwindow.Generate(X)
-        if err != nil {
+	if err != nil {
 		fmt.Println(err)
 		return
-        }
-        win.Create(X.RootWin(), 0, 0, 500, 500,
-                xproto.CwBackPixel|xproto.CwCursor,
-                0xffffffff, uint32(cursor))
-        win.Map()
+	}
+	win.Create(X.RootWin(), 0, 0, 500, 500,
+		xproto.CwBackPixel|xproto.CwCursor,
+		0xffffffff, uint32(cursor))
+	win.Map()
 
 	// create a sample window
 	//wid, _ := xproto.NewWindowId(XC)
@@ -75,18 +75,18 @@ func main() {
 
 	// setting up event handling
 	/*pingBefore, pingAfter, pingQuit := xevent.MainPing(X)
-EVENTLOOP:
-	for {
-		select {
-		case <-pingBefore:
-			// Wait for event processing to finish.
-			<-pingAfter
-		case val := <-someOtherChannel:
-			// do some work with val
-		case <-pingQuit:
-			break EVENTLOOP
-		}
-	}*/
+	EVENTLOOP:
+		for {
+			select {
+			case <-pingBefore:
+				// Wait for event processing to finish.
+				<-pingAfter
+			case val := <-someOtherChannel:
+				// do some work with val
+			case <-pingQuit:
+				break EVENTLOOP
+			}
+		}*/
 
 	for {
 		ev, xerr := XC.WaitForEvent()

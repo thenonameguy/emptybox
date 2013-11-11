@@ -7,6 +7,7 @@ import (
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil/xcursor"
 	//"github.com/BurntSushi/xgbutil/xevent"
+	"github.com/BurntSushi/xgbutil/xwindow"
 )
 
 func main() {
@@ -20,30 +21,57 @@ func main() {
 	}
 	defer X.Conn().Close()
 
-	// create cursor
-	_, err = xcursor.CreateCursor(X, xcursor.LeftPtr)
+	// create a cursor
+	cursor, err := xcursor.CreateCursor(X, xcursor.LeftPtr)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	// create an xgb_conn for later use 
-	xgb_conn := X.Conn()
+	// dump X connection obj
+	XC := X.Conn()
+
+	// assign default cursor to "the default invisible root window"
+	cookie := xproto.ChangeWindowAttributesChecked(XC, X.RootWin(),
+		xproto.CwBackPixmap|xproto.CwEventMask|xproto.CwCursor,
+		[]uint32 {
+			xproto.BackPixmapParentRelative,
+	                xproto.EventMaskButtonPress|
+			xproto.EventMaskButtonRelease|
+                        xproto.EventMaskButtonMotion|
+			xproto.EventMaskPointerMotion,
+			uint32(cursor),
+		})
+	err = cookie.Check()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	win, err := xwindow.Generate(X)
+        if err != nil {
+		fmt.Println(err)
+		return
+        }
+        win.Create(X.RootWin(), 0, 0, 500, 500,
+                xproto.CwBackPixel|xproto.CwCursor,
+                0xffffffff, uint32(cursor))
+        win.Map()
 
 	// create a sample window
-	wid, _ := xproto.NewWindowId(xgb_conn)
-	screen := xproto.Setup(xgb_conn).DefaultScreen(xgb_conn)
-	xproto.CreateWindow(xgb_conn, screen.RootDepth, wid, screen.Root,
-		0, 0, 500, 500, 0,
-		xproto.WindowClassInputOutput, screen.RootVisual,
-		xproto.CwBackPixel | xproto.CwEventMask,
-		[]uint32{ // values must be in the order defined by the protocol
-			0xffffffff,
-			xproto.EventMaskStructureNotify |
-			xproto.EventMaskKeyPress |
-			xproto.EventMaskKeyRelease})
+	//wid, _ := xproto.NewWindowId(XC)
+	//screen := xproto.Setup(XC).DefaultScreen(XC)
+	//xproto.CreateWindow(XC, screen.RootDepth, wid, screen.Root,
+	//	0, 0, 500, 500, 0,
+	//	xproto.WindowClassInputOutput, screen.RootVisual,
+	//	xproto.CwBackPixel | xproto.CwEventMask,
+	//	[]uint32{ // values must be in the order defined by the protocol
+	//		0xffffffff,
+	//		xproto.EventMaskStructureNotify |
+	//		xproto.EventMaskKeyPress |
+	//		xproto.EventMaskKeyRelease})
 
-	xproto.MapWindow(xgb_conn, wid)
+	//xproto.MapWindow(XC, wid)
 
 	// setting up event handling
 	/*pingBefore, pingAfter, pingQuit := xevent.MainPing(X)
@@ -61,7 +89,7 @@ EVENTLOOP:
 	}*/
 
 	for {
-		ev, xerr := xgb_conn.WaitForEvent()
+		ev, xerr := XC.WaitForEvent()
 		if ev == nil && xerr == nil {
 			fmt.Println("Both event and error are nil. Exiting...")
 			return

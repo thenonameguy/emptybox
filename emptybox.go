@@ -5,6 +5,7 @@ import (
 	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/xcursor"
+	"os"
 	"runtime"
 	//"github.com/BurntSushi/xgbutil/xevent"
 	"github.com/BurntSushi/xgbutil/xwindow"
@@ -17,16 +18,11 @@ func main() {
 	X, err := xgbutil.NewConn()
 	if err != nil {
 		fmt.Println(err)
-		return
+		os.Exit(1)
 	}
 	defer X.Conn().Close()
 
-	// create a cursor
-	cursor, err := xcursor.CreateCursor(X, xcursor.LeftPtr)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	cursor := createCursor(X, xcursor.LeftPtr)
 
 	// dump X connection obj
 	XC := X.Conn()
@@ -45,33 +41,18 @@ func main() {
 	err = cookie.Check()
 	if err != nil {
 		fmt.Println(err)
-		return
+		os.Exit(1)
 	}
 
 	win, err := xwindow.Generate(X)
 	if err != nil {
 		fmt.Println(err)
-		return
+		os.Exit(1)
 	}
 	win.Create(X.RootWin(), 0, 0, 500, 500,
 		xproto.CwBackPixel|xproto.CwCursor,
 		0xffffffff, uint32(cursor))
 	win.Map()
-
-	// create a sample window
-	//wid, _ := xproto.NewWindowId(XC)
-	//screen := xproto.Setup(XC).DefaultScreen(XC)
-	//xproto.CreateWindow(XC, screen.RootDepth, wid, screen.Root,
-	//	0, 0, 500, 500, 0,
-	//	xproto.WindowClassInputOutput, screen.RootVisual,
-	//	xproto.CwBackPixel | xproto.CwEventMask,
-	//	[]uint32{ // values must be in the order defined by the protocol
-	//		0xffffffff,
-	//		xproto.EventMaskStructureNotify |
-	//		xproto.EventMaskKeyPress |
-	//		xproto.EventMaskKeyRelease})
-
-	//xproto.MapWindow(XC, wid)
 
 	// setting up event handling
 	/*pingBefore, pingAfter, pingQuit := xevent.MainPing(X)
@@ -92,7 +73,7 @@ func main() {
 		ev, xerr := XC.WaitForEvent()
 		if ev == nil && xerr == nil {
 			fmt.Println("Both event and error are nil. Exiting...")
-			return
+			os.Exit(1)
 		}
 
 		if ev != nil {
@@ -102,4 +83,13 @@ func main() {
 			fmt.Printf("Error: %s\n", xerr)
 		}
 	}
+}
+
+func createCursor(X *xgbutil.XUtil, Type uint16) xproto.Cursor {
+	cursor, err := xcursor.CreateCursor(X, Type)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	return cursor
 }

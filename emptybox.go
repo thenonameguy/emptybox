@@ -85,6 +85,8 @@ func main() {
 	}
 }
 
+// Creates a cursor, and returns it.
+// Type: see conts in xcursor
 func createCursor(X *xgbutil.XUtil, Type uint16) xproto.Cursor {
 	cursor, err := xcursor.CreateCursor(X, Type)
 	if err != nil {

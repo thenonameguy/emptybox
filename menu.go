@@ -1,12 +1,11 @@
 package main
 
-import(
+import (
+	"fmt"
+	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"image"
-	"github.com/BurntSushi/xgbutil"
 	"os"
-	"fmt"
-
 )
 
 func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
@@ -61,19 +60,19 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	bounds := image.Rect(pos_x, pos_y+height, secw+width, sech+height+sech)
 
 	// get xproto.Window
-//	winID, err := xproto.NewWindowId(X.Conn())
-//	if err != nil {
-//		fmt.Println(err)
-//		os.Exit(1)
-//	}
+	//	winID, err := xproto.NewWindowId(X.Conn())
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		os.Exit(1)
+	//	}
 
 	img := ximg.SubImage(bounds)
 
-//	err = img.XSurfaceSet(winID)
-//	if err != nil {
-//		fmt.Println(err)
-//		os.Exit(1)
-//	}
+	//	err = img.XSurfaceSet(winID)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		os.Exit(1)
+	//	}
 
 	err = img.XDrawChecked()
 	if err != nil {

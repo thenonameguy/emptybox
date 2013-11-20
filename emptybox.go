@@ -42,15 +42,15 @@ func main() {
 		os.Exit(1)
 	}
 
-//	win, err := xwindow.Generate(X)
-//	if err != nil {
-//		fmt.Println(err)
-//		os.Exit(1)
-//	}
-//	win.Create(X.RootWin(), 0, 0, 500, 500,
-//		xproto.CwBackPixel|xproto.CwCursor,
-//		0xffffffff, uint32(cursor))
-//	win.Map()
+	//	win, err := xwindow.Generate(X)
+	//	if err != nil {
+	//		fmt.Println(err)
+	//		os.Exit(1)
+	//	}
+	//	win.Create(X.RootWin(), 0, 0, 500, 500,
+	//		xproto.CwBackPixel|xproto.CwCursor,
+	//		0xffffffff, uint32(cursor))
+	//	win.Map()
 
 	// setting up event handling
 	/*pingBefore, pingAfter, pingQuit := xevent.MainPing(X)

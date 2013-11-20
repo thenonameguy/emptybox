@@ -7,8 +7,6 @@ import (
 	"github.com/BurntSushi/xgbutil/xcursor"
 	"os"
 	"runtime"
-	//"github.com/BurntSushi/xgbutil/xevent"
-	"github.com/BurntSushi/xgbutil/xwindow"
 )
 
 func main() {
@@ -44,15 +42,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	win, err := xwindow.Generate(X)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	win.Create(X.RootWin(), 0, 0, 500, 500,
-		xproto.CwBackPixel|xproto.CwCursor,
-		0xffffffff, uint32(cursor))
-	win.Map()
+//	win, err := xwindow.Generate(X)
+//	if err != nil {
+//		fmt.Println(err)
+//		os.Exit(1)
+//	}
+//	win.Create(X.RootWin(), 0, 0, 500, 500,
+//		xproto.CwBackPixel|xproto.CwCursor,
+//		0xffffffff, uint32(cursor))
+//	win.Map()
 
 	// setting up event handling
 	/*pingBefore, pingAfter, pingQuit := xevent.MainPing(X)
@@ -68,7 +66,7 @@ func main() {
 				break EVENTLOOP
 			}
 		}*/
-
+	drawMenu(X, 10, 15, 12.0)
 	for {
 		ev, xerr := XC.WaitForEvent()
 		if ev == nil && xerr == nil {
@@ -86,7 +84,7 @@ func main() {
 }
 
 // Creates a cursor, and returns it.
-// Type: see conts in xcursor
+// Type: see consts in xcursor
 func createCursor(X *xgbutil.XUtil, Type uint16) xproto.Cursor {
 	cursor, err := xcursor.CreateCursor(X, Type)
 	if err != nil {

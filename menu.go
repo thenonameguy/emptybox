@@ -28,28 +28,24 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	msg := "it works"
 	// get proper width and height of the 1 line text
 	_, height := xgraphics.Extents(font, size, msg)
+	msg2 := "jfewőjdeiodhjwedoeh"
+	secw, sech := xgraphics.Extents(font, size, msg2)
 
-	// create canvas
-	ximg := xgraphics.New(X, image.Rect(pos_x, pos_y, 600, 400))
+	// create canvas(x resource pixmap)
+	ximg := xgraphics.New(X, image.Rect(pos_x, pos_y, pos_x+secw, pos_y+height+sech))
 	ximg.For(func(x, y int) xgraphics.BGRA {
 		return bg
 	})
 
 	// write the text
-	_, _, err = ximg.Text(pos_x+2, pos_y+2, fg, size, font, msg)
+	_, _, err = ximg.Text(pos_x, pos_y, fg, size, font, msg)
 	checkError(err)
 
-	//win := ximg.XShow()
-
-	msg2 := "blahbéhdweohde"
-	_, _, err = ximg.Text(pos_x+2, pos_y+height, fg, size, font, msg2)
+	_, _, err = ximg.Text(pos_x, pos_y+height, fg, size, font, msg2)
 	checkError(err)
 
-	secw, sech := xgraphics.Extents(font, size, msg2)
+	bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_y+height+sech)
 
-	bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_x+height+sech)
-
-	// get xproto.Window
 	winID, err := xproto.NewWindowId(X.Conn())
 	checkError(err)
 
@@ -62,8 +58,7 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	err = ximg.XSurfaceSet(winID)
 	checkError(err)
 
-	err = img.XDrawChecked()
-	checkError(err)
+	img.XDraw()
 
 	win := ximg.XShow()
 	ximg.XPaint(win.Id)

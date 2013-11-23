@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/BurntSushi/xgb/xproto"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"image"
@@ -47,17 +46,11 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	// now update where we have written text
 	bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_y+height+sech)
 
-	winID, err := xproto.NewWindowId(X.Conn())
-	checkError(err)
-
 	img := ximg.SubImage(bounds)
 	if img == nil {
 		fmt.Println("ximg.SubImage is nil")
 		os.Exit(1)
 	}
-
-	err = ximg.XSurfaceSet(winID)
-	checkError(err)
 
 	img.XDraw()
 

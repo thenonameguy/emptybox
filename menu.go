@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/BurntSushi/xgbutil"
 	"github.com/BurntSushi/xgbutil/xgraphics"
 	"image"
@@ -46,14 +45,10 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	// now update where we have written text
 	bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_y+height+sech)
 
-	img := ximg.SubImage(bounds)
-	if img == nil {
-		fmt.Println("ximg.SubImage is nil")
-		os.Exit(1)
-	}
-
-	img.XDraw()
-
+	// XShow() calls XSurfaceSet() and that needs to be before XDraw()
 	win := ximg.XShow()
+
+	ximg.SubImage(bounds).XDraw()
+
 	ximg.XPaint(win.Id)
 }

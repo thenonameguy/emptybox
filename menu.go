@@ -30,10 +30,13 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	secw, sech := xgraphics.Extents(font, size, msg2)
 
 	// create canvas(x resource pixmap)
-	ximg := xgraphics.New(X, image.Rect(pos_x, pos_y, pos_x+secw, pos_y+height+sech))
+	ximg := xgraphics.New(X, image.Rect(pos_x, pos_y, pos_x*2+secw, pos_y*2+height+sech))
 	ximg.For(func(x, y int) xgraphics.BGRA {
 		return bg
 	})
+
+	// XShow() calls XSurfaceSet() and that needs to be before XDraw()
+	win := ximg.XShow()
 
 	// write the text
 	_, _, err = ximg.Text(pos_x, pos_y, fg, size, font, msg)
@@ -44,9 +47,6 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 
 	// now update where we have written text
 	bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_y+height+sech)
-
-	// XShow() calls XSurfaceSet() and that needs to be before XDraw()
-	win := ximg.XShow()
 
 	ximg.SubImage(bounds).XDraw()
 

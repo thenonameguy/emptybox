@@ -14,10 +14,7 @@ func main() {
 
 	// connect to X
 	X, err := xgbutil.NewConn()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	checkError(err)
 	defer X.Conn().Close()
 
 	cursor := createCursor(X, xcursor.LeftPtr)
@@ -37,16 +34,10 @@ func main() {
 			uint32(cursor),
 		})
 	err = cookie.Check()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	checkError(err)
 
 	//	win, err := xwindow.Generate(X)
-	//	if err != nil {
-	//		fmt.Println(err)
-	//		os.Exit(1)
-	//	}
+	//	checkError(err)
 	//	win.Create(X.RootWin(), 0, 0, 500, 500,
 	//		xproto.CwBackPixel|xproto.CwCursor,
 	//		0xffffffff, uint32(cursor))
@@ -66,7 +57,7 @@ func main() {
 				break EVENTLOOP
 			}
 		}*/
-	drawMenu(X, 10, 15, 12.0)
+	drawMenu(X, 30, 30, 12.0)
 	for {
 		ev, xerr := XC.WaitForEvent()
 		if ev == nil && xerr == nil {
@@ -81,15 +72,4 @@ func main() {
 			fmt.Printf("Error: %s\n", xerr)
 		}
 	}
-}
-
-// Creates a cursor, and returns it.
-// Type: see consts in xcursor
-func createCursor(X *xgbutil.XUtil, Type uint16) xproto.Cursor {
-	cursor, err := xcursor.CreateCursor(X, Type)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	return cursor
 }

@@ -44,6 +44,7 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	_, _, err = ximg.Text(pos_x, pos_y+height, fg, size, font, msg2)
 	checkError(err)
 
+	// now update where we have written text
 	bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_y+height+sech)
 
 	winID, err := xproto.NewWindowId(X.Conn())

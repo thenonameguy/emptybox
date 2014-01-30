@@ -36,7 +36,7 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	})
 
 	// XShow() calls XSurfaceSet() and that needs to be before XDraw()
-	win := ximg.XShow()
+	//win := ximg.XShow()
 
 	// write the text
 	_, _, err = ximg.Text(pos_x, pos_y, fg, size, font, msg)
@@ -46,9 +46,12 @@ func drawMenu(X *xgbutil.XUtil, pos_x, pos_y int, size float64) {
 	checkError(err)
 
 	// now update where we have written text
-	bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_y+height+sech)
+	//bounds := image.Rect(pos_x, pos_y+height, pos_x+secw, pos_y+height+sech)
 
-	ximg.SubImage(bounds).XDraw()
+	//ximg.SubImage(bounds).XDraw()
+
+	// XShow() calls XSurfaceSet() and that needs to be before XDraw()
+	win := ximg.XShow()
 
 	ximg.XPaint(win.Id)
 }
